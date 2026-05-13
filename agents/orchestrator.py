@@ -24,7 +24,7 @@ class OrchestratorAgent(Agent):
             unique_id: Unique identifier
             model: Mesa model reference
         """
-        super().__init__(model)
+        super().__init__(unique_id, model)
         
         # Assignment system
         self.assigner = VehicleStationAssigner(

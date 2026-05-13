@@ -12,7 +12,7 @@ class NegotiatingVehicle(VehicleAgent):
     """Vehicle with queue negotiation and consensus waiting."""
     
     def __init__(self, unique_id, model, start_pos, battery_level=100.0):
-        super().__init__(unique_id, model, position=start_pos, battery_level=battery_level)
+        super().__init__(unique_id, model, position=start_pos)
         
         self.assigned_queue_position = None
         self.assigned_station = None

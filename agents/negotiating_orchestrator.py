@@ -67,7 +67,7 @@ class NegotiatingOrchestrator(Agent):
     """
     
     def __init__(self, unique_id, model, battery_threshold=30.0):
-        super().__init__(model)
+        super().__init__(unique_id, model)
         self.unique_id = unique_id
         self.battery_threshold = battery_threshold
         self.assigner = VehicleStationAssigner()

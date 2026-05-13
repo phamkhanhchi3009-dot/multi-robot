@@ -21,7 +21,7 @@ class VehicleAgent(Agent):
         charge_rate: float = 5.0,
         enable_negotiation: bool = False
     ):
-        super().__init__(model)
+        super().__init__(unique_id, model)
         self.unique_id = unique_id
         
         self.position = position
