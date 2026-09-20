@@ -1,0 +1,75 @@
+import json
+import matplotlib.pyplot as plt
+import os
+
+def draw_simulation_plots(json_file_path):
+    # 1. Đọc dữ liệu từ file JSON
+    if not os.path.exists(json_file_path):
+        print(f"Không tìm thấy file: {json_file_path}")
+        return
+        
+    with open(json_file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        
+    test_name = os.path.basename(json_file_path).replace(".json", "")
+    
+    # Tạo khung vẽ gồm 2 biểu đồ: Lịch sử Pin và Tần suất trạm sạc
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+    fig.suptitle(f"PHÂN TÍCH TRỰC QUAN - {test_name.upper()}", fontsize=14, fontweight='bold')
+
+    # --- BIỂU ĐỒ 1: LỊCH SỬ TIÊU HAO PIN ---
+    has_battery_data = False
+    for vehicle in data["vehicles"]:
+        if "battery_history" in vehicle and vehicle["battery_history"]:
+            ax1.plot(vehicle["battery_history"], label=f"Robot {vehicle['vehicle_id']}")
+            has_battery_data = True
+            
+    if has_battery_data:
+        ax1.set_title("Biểu đồ tiêu hao & sạc Pin qua các Ticks")
+        ax1.set_xlabel("Time (Ticks)")
+        ax1.set_ylabel("Dung lượng Pin (%)")
+        ax1.set_ylim(-5, 105)
+        ax1.axhline(y=20, color='r', linestyle='--', label='Ngưỡng pin yếu (20%)')
+        ax1.legend()
+        ax1.grid(True, linestyle=':', alpha=0.6)
+    else:
+        ax1.text(0.5, 0.5, 'Không có dữ liệu pin', ha='center', va='center')
+
+    # --- BIỂU ĐỒ 2: TẦN SUẤT SỬ DỤNG TRẠM SẠC ---
+    stations = data["stations"]
+    if stations:
+        station_ids = [f"Trạm {s_id}" for s_id in stations.keys()]
+        total_charges = [s_info["total_charges"] for s_info in stations.values()]
+        
+        colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#FF5722']
+        bars = ax2.bar(station_ids, total_charges, color=colors[:len(station_ids)], width=0.5)
+        
+        ax2.set_title("Tổng số lượt sạc tại mỗi trạm")
+        ax2.set_xlabel("Danh sách trạm sạc")
+        ax2.set_ylabel("Số lượt sạc (Tích lũy)")
+        ax2.grid(axis='y', linestyle=':', alpha=0.6)
+        
+        # Hiển thị số liệu cụ thể trên đầu mỗi cột
+        for bar in bars:
+            height = bar.get_height()
+            ax2.annotate(f'{height}',
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+    else:
+        ax2.text(0.5, 0.5, 'Không có dữ liệu trạm sạc', ha='center', va='center')
+
+    plt.tight_layout()
+    
+    # Tự động lưu biểu đồ thành file ảnh trực quan để ném vào báo cáo/slide
+    output_img = f"simulation_results/{test_name}_chart.png"
+    plt.savefig(output_img, dpi=300)
+    print(f"[ĐỒ THỊ] Đã vẽ và lưu biểu đồ trực quan tại: {output_img}")
+    plt.show()
+
+# --- CHẠY THỬ NGHIỆM ---
+if __name__ == "__main__":
+    # Điền tên file bạn muốn vẽ vào đây để kiểm tra trực quan
+    target_file = "simulation_results/scenario_1_simple_agent.json"
+    draw_simulation_plots(target_file)

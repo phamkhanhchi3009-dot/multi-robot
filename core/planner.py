@@ -93,6 +93,7 @@ class AStarPlanner:
             if current_pos == goal:
                 return self._reconstruct_path(came_from, current_pos), current.g_score
             
+            # current_pos is passed! (After verify process)
             closed_set.add(current_pos)
             
             # Explore neighbors
@@ -141,7 +142,7 @@ class AStarPlanner:
         return path
 
 
-def smooth_path(path: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+def s_path(path: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
     """
     Smooth path by removing unnecessary waypoints.
     

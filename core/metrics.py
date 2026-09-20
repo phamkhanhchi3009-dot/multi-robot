@@ -169,3 +169,4 @@ class SimulationMetrics:
             print(f"  Total Charges: {s_stat['total_charges']}")
         
         print("\n" + "="*60 + "\n")
+    
